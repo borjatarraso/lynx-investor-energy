@@ -2411,6 +2411,10 @@ class LynxEnergyGUI:
             prefix = f"{STAR} "
             label_fg = ACCENT
             label_font = FONT_BOLD
+        elif relevance == Relevance.IMPORTANT:
+            prefix = "> "
+            label_fg = "#ff8800"
+            label_font = FONT_BOLD
         elif relevance == Relevance.CONTEXTUAL:
             prefix = "  "
             label_fg = FG_SUBTLE
@@ -2448,9 +2452,23 @@ class LynxEnergyGUI:
         bg = BG_INPUT if idx % 2 == 0 else BG_CARD
         row = tk.Frame(frame, bg=bg)
         row.pack(fill=tk.X)
-        prefix = f"{STAR} " if relevance == Relevance.CRITICAL else "  "
-        fg = FG_SUBTLE if relevance == Relevance.CONTEXTUAL else ACCENT
-        tk.Label(row, text=f"{prefix}{label}", font=FONT_BOLD if relevance != Relevance.CONTEXTUAL else FONT_SMALL,
+        if relevance == Relevance.CRITICAL:
+            prefix = f"{STAR} "
+            fg = ACCENT
+            label_font = FONT_BOLD
+        elif relevance == Relevance.IMPORTANT:
+            prefix = "> "
+            fg = "#ff8800"
+            label_font = FONT_BOLD
+        elif relevance == Relevance.CONTEXTUAL:
+            prefix = "  "
+            fg = FG_SUBTLE
+            label_font = FONT_SMALL
+        else:
+            prefix = "  "
+            fg = ACCENT
+            label_font = FONT_BOLD
+        tk.Label(row, text=f"{prefix}{label}", font=label_font,
                  bg=bg, fg=fg, width=24, anchor=tk.E, pady=3).pack(side=tk.LEFT, padx=(12, 6))
         val_fg = FG_DIM if relevance == Relevance.CONTEXTUAL else FG
         tk.Label(row, text=value, font=FONT if relevance != Relevance.CONTEXTUAL else FONT_SMALL,

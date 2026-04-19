@@ -1,6 +1,6 @@
 # Lynx Energy Analysis -- API Reference
 
-Public Python API for the `lynx_energy` package (v1.0).
+Public Python API for the `lynx_energy` package (v0.4).
 
 ## Package Structure
 
@@ -148,7 +148,7 @@ nano-cap explorers than for mega-cap producers.
 - `category_summaries` -- dict with human-readable summary per category.
 - `strengths` / `risks` -- lists of up to 6 key points each.
 - `tier_note` / `stage_note` -- explanations of why certain metrics matter for this company.
-- `screening_checklist` -- dict of boolean pass/fail/None checks (e.g. `cash_runway_18m`, `low_dilution`, `insider_ownership`).
+- `screening_checklist` -- dict of boolean pass/fail/None checks (e.g. `cash_runway_18m`, `low_dilution`, `insider_ownership`, `capital_discipline`, `dividend_covered`).
 
 **Example:**
 
@@ -177,7 +177,7 @@ All models are Python `dataclasses`.  Every numeric field defaults to `None`
 | `CompanyStage` | `GRASSROOTS`, `EXPLORER`, `DEVELOPER`, `PRODUCER`, `ROYALTY` |
 | `Commodity` | `OIL`, `NATURAL_GAS`, `URANIUM`, `COAL`, `LNG`, `REFINED_PRODUCTS`, `OTHER` |
 | `JurisdictionTier` | `TIER_1` (Low Risk), `TIER_2` (Moderate Risk), `TIER_3` (High Risk), `UNKNOWN` |
-| `Relevance` | `CRITICAL`, `RELEVANT`, `CONTEXTUAL`, `IRRELEVANT` |
+| `Relevance` | `CRITICAL`, `IMPORTANT`, `RELEVANT`, `CONTEXTUAL`, `IRRELEVANT` |
 
 ### Core Dataclasses
 
@@ -213,7 +213,7 @@ Key fields: `pe_trailing`, `pe_forward`, `pb_ratio`, `ps_ratio`, `p_fcf`,
 `ev_ebitda`, `ev_revenue`, `peg_ratio`, `dividend_yield`, `earnings_yield`,
 `enterprise_value`, `market_cap`, `price_to_tangible_book`, `price_to_ncav`,
 `ev_per_boe`, `ev_per_mcfe`, `p_nav`, `cash_to_market_cap`,
-`nav_per_share`.
+`nav_per_share`, `fcf_yield`, `croci`.
 
 #### `ProfitabilityMetrics`
 
@@ -221,7 +221,8 @@ Margins and returns, plus energy-specific cost metrics.
 
 Key fields: `roe`, `roa`, `roic`, `gross_margin`, `operating_margin`,
 `net_margin`, `fcf_margin`, `ebitda_margin`, `netback_per_boe`, `netback_unit`,
-`operating_cost_per_boe`, `netback_margin`.
+`operating_cost_per_boe`, `netback_margin`, `ocf_to_net_income`,
+`fcf_per_share`, `ocf_per_share`, `fcf_conversion`.
 
 #### `SolvencyMetrics`
 
@@ -231,7 +232,8 @@ Key fields: `debt_to_equity`, `debt_to_ebitda`, `current_ratio`, `quick_ratio`,
 `interest_coverage`, `altman_z_score`, `net_debt`, `total_debt`, `total_cash`,
 `cash_burn_rate`, `cash_runway_years`, `working_capital`, `cash_per_share`,
 `tangible_book_value`, `ncav`, `ncav_per_share`, `quarterly_burn_rate`,
-`burn_as_pct_of_market_cap`.
+`burn_as_pct_of_market_cap`, `debt_per_share`, `net_debt_per_share`,
+`debt_service_coverage`.
 
 #### `GrowthMetrics`
 
@@ -241,14 +243,16 @@ Key fields: `revenue_growth_yoy`, `revenue_cagr_3y`, `revenue_cagr_5y`,
 `earnings_growth_yoy`, `earnings_cagr_3y`, `earnings_cagr_5y`,
 `fcf_growth_yoy`, `book_value_growth_yoy`, `dividend_growth_5y`,
 `shares_growth_yoy`, `shares_growth_3y_cagr`, `fully_diluted_shares`,
-`dilution_ratio`, `production_growth_yoy`.
+`dilution_ratio`, `production_growth_yoy`, `reinvestment_rate`,
+`dividend_payout_ratio`, `dividend_coverage`, `shareholder_yield`.
 
 #### `EfficiencyMetrics`
 
 Operational efficiency ratios.
 
 Key fields: `asset_turnover`, `inventory_turnover`, `receivables_turnover`,
-`days_sales_outstanding`, `days_inventory`, `cash_conversion_cycle`.
+`days_sales_outstanding`, `days_inventory`, `cash_conversion_cycle`,
+`capex_to_revenue`, `capex_to_ocf`, `capex_intensity`.
 
 #### `EnergyQualityIndicators`
 
@@ -488,16 +492,38 @@ development stage is the primary analytical axis for energy companies.
 
 | Level | Meaning | Visual Treatment |
 |---|---|---|
-| `CRITICAL` | Must-check metric for this stage/tier. | Bold with star marker. |
-| `RELEVANT` | Important, displayed normally. | Normal display. |
+| `CRITICAL` | Must-check metric for this stage/tier. | `***CRITICAL***` marker (red). |
+| `IMPORTANT` | High-priority metric, between critical and relevant. | Bold display with emphasis. |
+| `RELEVANT` | Standard metric, displayed normally. | Normal display. |
 | `CONTEXTUAL` | Informational only, not a primary decision driver. | Dimmed. |
 | `IRRELEVANT` | Not meaningful for this stage/tier. | Hidden or struck-through. |
+
+### Severity Markers
+
+Console display uses the following severity markers with color coding:
+
+| Marker | Color | Meaning |
+|---|---|---|
+| `***CRITICAL***` | Red | Critical issue requiring immediate attention. |
+| `*WARNING*` | Orange | Warning condition. |
+| `[WATCH]` | Yellow | Metric to monitor. |
+| `[OK]` | Green | Metric within acceptable range. |
+| `[STRONG]` | Grey | Strong/healthy metric. |
+
+### Impact Column
+
+Metric tables in console display include an **Impact** column that shows
+how each metric affects the overall analysis score. This provides
+transparency into the scoring methodology and helps users understand
+which metrics are driving the verdict.
 
 **Stage-driven examples:**
 
 - `cash_runway_years` is `CRITICAL` for Grassroots, Explorer, Developer; `CONTEXTUAL` for Producer; `IRRELEVANT` for Royalty.
 - `pe_trailing` is `IRRELEVANT` for Grassroots, Explorer, Developer; `RELEVANT` for Producer and Royalty.
 - `shares_growth_yoy` is `CRITICAL` for Grassroots, Explorer, Developer; `RELEVANT` for Producer and Royalty.
+- `fcf_yield` is `IMPORTANT` for Producer; `CONTEXTUAL` for Developer; `IRRELEVANT` for Grassroots and Explorer.
+- `capex_to_revenue` is `IMPORTANT` for Producer; `RELEVANT` for Developer; `IRRELEVANT` for Grassroots and Explorer.
 
 ---
 

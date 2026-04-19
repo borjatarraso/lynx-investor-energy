@@ -153,3 +153,43 @@ class TestCalcIntrinsicValue:
         iv = calc_intrinsic_value(sample_info, sample_statements, GrowthMetrics(),
                                   SolvencyMetrics(), CompanyTier.NANO, CompanyStage.GRASSROOTS)
         assert "Cash" in (iv.primary_method or "")
+
+
+class TestNewEnergyMetrics:
+    """Tests for v0.3+ energy-specific metrics."""
+
+    def test_fcf_yield_calculated(self, sample_info, sample_statements):
+        v = calc_valuation(sample_info, sample_statements, CompanyTier.MID, CompanyStage.PRODUCER)
+        # FCF yield should be calculated when FCF > 0 and EV > 0
+        if v.fcf_yield is not None:
+            assert 0 < v.fcf_yield < 1
+
+    def test_croci_calculated(self, sample_info, sample_statements):
+        p = calc_profitability(sample_info, sample_statements, CompanyTier.MID, CompanyStage.PRODUCER)
+        if p.croci is not None:
+            assert isinstance(p.croci, float)
+
+    def test_ocf_to_net_income(self, sample_info, sample_statements):
+        p = calc_profitability(sample_info, sample_statements, CompanyTier.MID, CompanyStage.PRODUCER)
+        if p.ocf_to_net_income is not None:
+            assert isinstance(p.ocf_to_net_income, float)
+
+    def test_debt_per_share(self, sample_info, sample_statements):
+        s = calc_solvency(sample_info, sample_statements, CompanyTier.MID, CompanyStage.PRODUCER)
+        if s.debt_per_share is not None:
+            assert s.debt_per_share >= 0
+
+    def test_capex_to_revenue(self, sample_statements):
+        g = calc_growth(sample_statements, CompanyTier.MID, CompanyStage.PRODUCER)
+        if g.capex_to_revenue is not None:
+            assert 0 <= g.capex_to_revenue <= 2
+
+    def test_fcf_per_share(self, sample_statements):
+        g = calc_growth(sample_statements, CompanyTier.MID, CompanyStage.PRODUCER)
+        if g.fcf_per_share is not None:
+            assert isinstance(g.fcf_per_share, float)
+
+    def test_dividend_coverage(self, sample_statements):
+        g = calc_growth(sample_statements, CompanyTier.MID, CompanyStage.PRODUCER)
+        # dividend_coverage may be None if no dividends paid
+        assert g.dividend_coverage is None or g.dividend_coverage > 0

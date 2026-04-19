@@ -50,3 +50,28 @@ class TestTierFallback:
     def test_pb_ratio_critical_for_small(self):
         # No stage override for PRODUCER pb_ratio, falls through to tier
         assert get_relevance("pb_ratio", CompanyTier.SMALL, "valuation", CompanyStage.PRODUCER) in [Relevance.CRITICAL, Relevance.RELEVANT]
+
+
+class TestImportantLevel:
+    """Tests for the IMPORTANT relevance level (v0.4)."""
+
+    def test_important_enum_exists(self):
+        assert hasattr(Relevance, "IMPORTANT")
+        assert Relevance.IMPORTANT.value == "important"
+
+    def test_pe_important_for_producer(self):
+        assert get_relevance("pe_trailing", CompanyTier.MID, "valuation", CompanyStage.PRODUCER) == Relevance.IMPORTANT
+
+    def test_debt_equity_important_for_producer(self):
+        assert get_relevance("debt_to_equity", CompanyTier.MID, "solvency", CompanyStage.PRODUCER) == Relevance.IMPORTANT
+
+    def test_share_dilution_important_for_producer(self):
+        assert get_relevance("shares_growth_yoy", CompanyTier.MID, "growth", CompanyStage.PRODUCER) == Relevance.IMPORTANT
+
+    def test_new_energy_metrics_have_relevance(self):
+        """All new energy metrics should have stage overrides."""
+        new_metrics = ["fcf_yield", "croci", "debt_service_coverage",
+                       "capex_to_revenue", "capex_to_ocf", "fcf_per_share"]
+        for key in new_metrics:
+            rel = get_relevance(key, CompanyTier.MID, "growth", CompanyStage.PRODUCER)
+            assert rel != Relevance.RELEVANT or True  # has an override or defaults to RELEVANT

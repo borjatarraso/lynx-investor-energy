@@ -39,6 +39,11 @@ When I Explain Section "${section}"
 When I Explain Conclusion "${category}"
     Run App    --explain-conclusion    ${category}
 
+When I Run Python Code "${code}"
+    ${result}=    Run Process    ${PYTHON}    -c    ${code}    timeout=30s
+    Set Test Variable    ${OUTPUT}    ${result.stdout}${result.stderr}
+    Set Test Variable    ${RC}    ${result.rc}
+
 When I Search For "${query}"
     Run App    -p    -s    ${query}
 
@@ -72,7 +77,7 @@ Show Version
     When I Run Version
     Then The Exit Code Should Be 0
     Then The Output Should Contain "lynx-energy"
-    Then The Output Should Contain "1.0"
+    Then The Output Should Contain "0.4"
 
 Show About
     [Documentation]    GIVEN the app WHEN I run about THEN it shows author and license
@@ -98,13 +103,16 @@ Explain An Energy-Specific Metric
     Then The Output Should Contain "Share Dilution"
 
 List All Available Metrics
-    [Documentation]    GIVEN the app WHEN I list metrics THEN it shows the full table
+    [Documentation]    GIVEN the app WHEN I list metrics THEN it shows the full table including v0.4 metrics
     Given The Application Is Available
     When I List All Metrics
     Then The Exit Code Should Be 0
     Then The Output Should Contain "pe_trailing"
     Then The Output Should Contain "cash_to_market_cap"
     Then The Output Should Contain "quality_score"
+    Then The Output Should Contain "fcf_yield"
+    Then The Output Should Contain "croci"
+    Then The Output Should Contain "capex_to_revenue"
 
 Explain A Section
     [Documentation]    GIVEN the app WHEN I explain a section THEN it shows section description
@@ -146,3 +154,30 @@ No Identifier Shows Help
     Given The Application Is Available
     Run App    -p
     Then The Exit Code Should Be 1
+
+Severity Markers Use New Format
+    [Documentation]    GIVEN the display module WHEN severity markers are rendered THEN v0.4 format is used
+    When I Run Python Code "from lynx_energy.display import get_severity_marker; markers = [get_severity_marker(level) for level in ['critical','warning','watch','ok','strong']]; assert '***CRITICAL***' in markers[0] or 'CRITICAL' in markers[0]; print('OK')"
+    Then The Exit Code Should Be 0
+    Then The Output Should Contain "OK"
+
+Explain New Energy Metric FCF Yield
+    [Documentation]    GIVEN the app WHEN I explain fcf_yield THEN it shows details
+    Given The Application Is Available
+    When I Explain Metric "fcf_yield"
+    Then The Exit Code Should Be 0
+    Then The Output Should Contain "FCF"
+
+Explain New Energy Metric CROCI
+    [Documentation]    GIVEN the app WHEN I explain croci THEN it shows details
+    Given The Application Is Available
+    When I Explain Metric "croci"
+    Then The Exit Code Should Be 0
+    Then The Output Should Contain "CROCI"
+
+Explain New Energy Metric Capex To Revenue
+    [Documentation]    GIVEN the app WHEN I explain capex_to_revenue THEN it shows details
+    Given The Application Is Available
+    When I Explain Metric "capex_to_revenue"
+    Then The Exit Code Should Be 0
+    Then The Output Should Contain "Capex"

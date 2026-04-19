@@ -1198,7 +1198,12 @@ def _build_share_structure(r: AnalysisReport) -> Static:
     def _row(label, value, relevance):
         if relevance == Relevance.IRRELEVANT:
             return
-        prefix = "[bold cyan]*[/] " if relevance == Relevance.CRITICAL else "  "
+        if relevance == Relevance.CRITICAL:
+            prefix = "[bold cyan]*[/] "
+        elif relevance == Relevance.IMPORTANT:
+            prefix = "[#ff8800]>[/] "
+        else:
+            prefix = "  "
         val = f"[dim]{value}[/]" if relevance == Relevance.CONTEXTUAL else value
         t.add_row(f"{prefix}{label}", val)
 
@@ -1228,7 +1233,12 @@ def _build_energy_quality(r: AnalysisReport) -> Static:
     def _row(label, value, relevance):
         if relevance == Relevance.IRRELEVANT:
             return
-        prefix = "[bold cyan]*[/] " if relevance == Relevance.CRITICAL else "  "
+        if relevance == Relevance.CRITICAL:
+            prefix = "[bold cyan]*[/] "
+        elif relevance == Relevance.IMPORTANT:
+            prefix = "[#ff8800]>[/] "
+        else:
+            prefix = "  "
         val = f"[dim]{value}[/]" if relevance == Relevance.CONTEXTUAL else value
         t.add_row(f"{prefix}{label}", val)
 
@@ -1555,6 +1565,9 @@ def _rm_rel(t: DataTable, label: str, value: str, assessment: str,
     prefix = ""
     if rel == Relevance.CRITICAL:
         prefix = "* "
+        label = f"{prefix}{label}"
+    elif rel == Relevance.IMPORTANT:
+        prefix = "> "
         label = f"{prefix}{label}"
     elif rel == Relevance.CONTEXTUAL:
         label = f"  {label}"

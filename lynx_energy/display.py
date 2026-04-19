@@ -1126,7 +1126,7 @@ def _display_header(report):
         f"[{tc}]{p.tier.value}[/]  |  [{sc}]{p.stage.value}[/]\n"
         f"[cyan]Commodity:[/] {p.primary_commodity.value}  |  "
         f"[cyan]Jurisdiction:[/] {p.jurisdiction_tier.value}\n"
-        f"[dim]* = critical metric for this stage/tier  |  dimmed = less relevant[/]",
+        f"[dim]* = critical  |  > = important  |  dimmed = informational  |  Impact column shows relevance[/]",
         border_style=tc,
         title=f"[{tc}]{p.tier.value}[/] [{sc}]{p.stage.value}[/]",
     ))
@@ -1794,14 +1794,15 @@ def _display_market_intelligence(report):
 
     # --- Insider Activity ---
     if mi.insider_transactions:
-        t = Table(title="Recent Insider Transactions", show_lines=True, border_style="yellow")
-        t.add_column("Date", min_width=12, no_wrap=True)
-        t.add_column("Insider", min_width=20)
-        t.add_column("Position", min_width=16)
-        t.add_column("Action", ratio=1, overflow="fold")
-        t.add_column("Shares", justify="right", min_width=10, no_wrap=True)
+        t = Table(title="Recent Insider Transactions", show_lines=True, border_style="yellow", expand=True)
+        t.add_column("Date", min_width=11, no_wrap=True)
+        t.add_column("Insider", ratio=2, overflow="fold")
+        t.add_column("Position", ratio=1, overflow="fold")
+        t.add_column("Action", ratio=2, overflow="fold")
+        t.add_column("Shares", justify="right", min_width=12, no_wrap=True)
         for tx in mi.insider_transactions[:8]:
-            t.add_row(tx.date, tx.insider, tx.position, tx.transaction_type,
+            date_str = tx.date[:10] if len(tx.date) > 10 else tx.date
+            t.add_row(date_str, tx.insider, tx.position, tx.transaction_type,
                       f"{tx.shares:,.0f}" if tx.shares else "N/A")
         console.print(t)
         if mi.insider_buy_signal:
@@ -1842,10 +1843,10 @@ def _display_market_intelligence(report):
 def _display_financials(report):
     if not report.financials:
         return
-    t = Table(title="Financial Statements Summary (Annual)", show_lines=True, border_style="cyan")
-    t.add_column("Period", style="bold", no_wrap=True)
+    t = Table(title="Financial Statements Summary (Annual)", show_lines=True, border_style="cyan", expand=True)
+    t.add_column("Period", style="bold", min_width=12, no_wrap=True)
     for lbl in ["Revenue", "Gross Profit", "Op. Income", "Net Income", "FCF", "Total Equity", "Total Debt"]:
-        t.add_column(lbl, justify="right", min_width=11, no_wrap=True)
+        t.add_column(lbl, justify="right", min_width=10, no_wrap=True)
     for s in report.financials[:5]:
         t.add_row(
             s.period,

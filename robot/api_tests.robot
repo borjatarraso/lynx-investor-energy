@@ -96,6 +96,12 @@ Classify Jurisdiction Tier 2
     Then The Exit Code Should Be 0
     Then The Output Should Contain "Tier 2"
 
+Relevance Enum Includes IMPORTANT
+    [Documentation]    GIVEN Relevance enum WHEN I access IMPORTANT THEN it exists between CRITICAL and RELEVANT
+    When I Run Python Code "from lynx_energy.models import Relevance; vals = [r.value for r in Relevance]; assert 'important' in vals; idx_c = vals.index('critical'); idx_i = vals.index('important'); idx_r = vals.index('relevant'); assert idx_c < idx_i < idx_r; print('OK')"
+    Then The Exit Code Should Be 0
+    Then The Output Should Contain "OK"
+
 Relevance Explorer PE Irrelevant
     [Documentation]    GIVEN explorer WHEN I check P/E THEN irrelevant
     When I Run Python Code "from lynx_energy.metrics.relevance import get_relevance; from lynx_energy.models import CompanyTier, CompanyStage; print(get_relevance('pe_trailing', CompanyTier.MICRO, 'valuation', CompanyStage.EXPLORER).value)"
@@ -171,5 +177,47 @@ Conclusion Generation
 Energy Metrics In Explanations
     [Documentation]    GIVEN explanations WHEN I list THEN energy metrics present
     When I Run Python Code "from lynx_energy.metrics.explanations import list_metrics; keys = [m.key for m in list_metrics()]; assert 'cash_to_market_cap' in keys; assert 'quality_score' in keys; print('OK')"
+    Then The Exit Code Should Be 0
+    Then The Output Should Contain "OK"
+
+New Energy Metrics FCF Yield And CROCI Exist
+    [Documentation]    GIVEN v0.4 metrics WHEN I check fcf_yield and croci THEN they exist on ValuationMetrics
+    When I Run Python Code "from lynx_energy.models import ValuationMetrics; v = ValuationMetrics(); assert hasattr(v, 'fcf_yield'); assert hasattr(v, 'croci'); print('OK')"
+    Then The Exit Code Should Be 0
+    Then The Output Should Contain "OK"
+
+New Energy Metrics Capex To Revenue Exists
+    [Documentation]    GIVEN v0.4 metrics WHEN I check capex_to_revenue THEN it exists on EfficiencyMetrics
+    When I Run Python Code "from lynx_energy.models import EfficiencyMetrics; e = EfficiencyMetrics(); assert hasattr(e, 'capex_to_revenue'); assert hasattr(e, 'capex_to_ocf'); assert hasattr(e, 'capex_intensity'); print('OK')"
+    Then The Exit Code Should Be 0
+    Then The Output Should Contain "OK"
+
+New Energy Metrics Solvency Fields Exist
+    [Documentation]    GIVEN v0.4 metrics WHEN I check solvency THEN new debt fields exist
+    When I Run Python Code "from lynx_energy.models import SolvencyMetrics; s = SolvencyMetrics(); assert hasattr(s, 'debt_per_share'); assert hasattr(s, 'net_debt_per_share'); assert hasattr(s, 'debt_service_coverage'); print('OK')"
+    Then The Exit Code Should Be 0
+    Then The Output Should Contain "OK"
+
+New Energy Metrics Growth Fields Exist
+    [Documentation]    GIVEN v0.4 metrics WHEN I check growth THEN new fields exist
+    When I Run Python Code "from lynx_energy.models import GrowthMetrics; g = GrowthMetrics(); assert hasattr(g, 'reinvestment_rate'); assert hasattr(g, 'dividend_payout_ratio'); assert hasattr(g, 'dividend_coverage'); assert hasattr(g, 'shareholder_yield'); print('OK')"
+    Then The Exit Code Should Be 0
+    Then The Output Should Contain "OK"
+
+New Energy Metrics Profitability Fields Exist
+    [Documentation]    GIVEN v0.4 metrics WHEN I check profitability THEN new fcf fields exist
+    When I Run Python Code "from lynx_energy.models import ProfitabilityMetrics; p = ProfitabilityMetrics(); assert hasattr(p, 'ocf_to_net_income'); assert hasattr(p, 'fcf_per_share'); assert hasattr(p, 'ocf_per_share'); assert hasattr(p, 'fcf_conversion'); print('OK')"
+    Then The Exit Code Should Be 0
+    Then The Output Should Contain "OK"
+
+New Screening Checks Capital Discipline And Dividend Covered
+    [Documentation]    GIVEN v0.4 screening WHEN conclusion generated THEN new checks present
+    When I Run Python Code "from lynx_energy.models import AnalysisReport, CompanyProfile; from lynx_energy.core.conclusion import generate_conclusion; r = AnalysisReport(profile=CompanyProfile(ticker='TEST', name='Test')); c = generate_conclusion(r); checklist = c.screening_checklist; assert 'capital_discipline' in checklist; assert 'dividend_covered' in checklist; print('OK')"
+    Then The Exit Code Should Be 0
+    Then The Output Should Contain "OK"
+
+AnalysisReport Uses Energy Quality Field
+    [Documentation]    GIVEN AnalysisReport WHEN I set energy_quality THEN it accepts EnergyQualityIndicators
+    When I Run Python Code "from lynx_energy.models import AnalysisReport, CompanyProfile, EnergyQualityIndicators; eq = EnergyQualityIndicators(quality_score=75.0); r = AnalysisReport(profile=CompanyProfile(ticker='T', name='T'), energy_quality=eq); assert r.energy_quality.quality_score == 75.0; print('OK')"
     Then The Exit Code Should Be 0
     Then The Output Should Contain "OK"

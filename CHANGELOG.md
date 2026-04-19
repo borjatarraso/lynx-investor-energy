@@ -2,6 +2,32 @@
 
 All notable changes to Lynx Energy Analysis are documented here.
 
+## [0.4] - 2026-04-19
+
+### Added
+- **Impact column** in all metric tables showing relevance level with color coding:
+  - Critical (blinking red), Important (orange), Relevant (yellow), Informational (green), Irrelevant (grey/hidden)
+- **IMPORTANT relevance level** between CRITICAL and RELEVANT for key metrics (P/E, D/E, ROE, EV/Revenue, share dilution) — displayed with `>` prefix and orange Impact tag
+- **Severity markers** updated to final format across all 53 assessment functions:
+  - `***CRITICAL***` — bold red uppercase
+  - `*WARNING*` — orange text
+  - `[WATCH]` — yellow text in brackets
+  - `[OK]` — green text in brackets
+  - `[STRONG]` — grey/silver text in brackets
+- **12 new unit tests**: 7 for new energy metrics (FCF yield, CROCI, OCF/NI, debt/share, capex/revenue, FCF/share, dividend coverage), 5 for IMPORTANT relevance level
+- Updated Robot Framework tests for IMPORTANT level and new metrics
+- Updated API documentation with all new fields and Impact column behavior
+
+### Fixed
+- **Financial statements table** truncation — increased Period column width and enabled table expansion
+- **Insider transactions table** — dates trimmed to YYYY-MM-DD, columns use ratio-based widths to prevent truncation
+- **Header legend** updated to show `>` = important marker alongside `*` = critical
+
+### Changed
+- All 4 UI modes (Console, TUI, GUI, Interactive) handle the IMPORTANT relevance level
+- Version bumped to 0.4
+- Total: 173 tests passing, 53 metric explanations
+
 ## [0.3] - 2026-04-19
 
 ### Added
