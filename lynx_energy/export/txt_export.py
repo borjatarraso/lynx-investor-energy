@@ -13,7 +13,7 @@ from lynx_energy.models import AnalysisReport, CompanyStage
 # Formatting helpers
 # ---------------------------------------------------------------------------
 
-W = 70  # report width
+W = 90  # report width
 
 
 def _safe(val, default=None):

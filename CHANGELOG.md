@@ -2,6 +2,11 @@
 
 All notable changes to Lynx Energy Analysis are documented here.
 
+## [1.0] - 2026-04-19
+
+### Release
+- Bumped to v1.0 — first stable release, unified with Lince Investor suite
+
 ## [0.5] - 2026-04-19
 
 ### Fixed (30+ bugs from deep audit)
@@ -38,7 +43,7 @@ All notable changes to Lynx Energy Analysis are documented here.
 - All fixed to use `is not None` checks
 
 ### Changed
-- Version bumped to 0.5
+- Version bumped to 0.5 (pre-release)
 - Total: 173 tests passing
 
 ## [0.4] - 2026-04-19

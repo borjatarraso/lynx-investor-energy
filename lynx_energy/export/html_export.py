@@ -114,22 +114,20 @@ CSS = """
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  font-family: 'Segoe UI', -apple-system, system-ui, sans-serif;
-  max-width: 920px; margin: 0 auto; padding: 32px 28px;
+  font-family: 'Consolas', 'Monaco', 'Menlo', 'Noto Sans Mono', monospace;
+  max-width: 1100px; margin: 0 auto; padding: 24px 40px;
   background: #fff; color: #1a1a2e; line-height: 1.55;
-  font-size: 13px;
+  font-size: 14px;
 }
 h1 {
-  font-family: Georgia, 'Times New Roman', serif;
-  color: #1a2744; font-size: 1.75em; font-weight: 700;
+  color: #2c5282; font-size: 1.75em; font-weight: 700;
   margin-bottom: 2px; letter-spacing: -0.02em;
-  border-bottom: 3px solid #1a2744; padding-bottom: 8px;
+  border-bottom: 2px solid #cbd5e0; padding-bottom: 8px;
 }
 h2 {
-  font-family: Georgia, 'Times New Roman', serif;
-  color: #1a2744; font-size: 1.05em; font-weight: 600;
+  color: #2c5282; font-size: 1.05em; font-weight: 600;
   margin: 0 0 10px 0; padding-bottom: 5px;
-  border-bottom: 1px solid #d0d5dd;
+  border-bottom: 1px solid #cbd5e0;
   text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.88em;
 }
 .subtitle {
