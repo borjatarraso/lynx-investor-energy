@@ -77,7 +77,8 @@ Show Version
     When I Run Version
     Then The Exit Code Should Be 0
     Then The Output Should Contain "lynx-energy"
-    Then The Output Should Contain "0.4"
+    Then The Output Should Contain "2.0"
+    Then The Output Should Contain "Lince Investor Suite"
 
 Show About
     [Documentation]    GIVEN the app WHEN I run about THEN it shows author and license
