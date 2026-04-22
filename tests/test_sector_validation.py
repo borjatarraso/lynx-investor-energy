@@ -120,3 +120,20 @@ class TestSectorValidation:
         """A company mentioning uranium should pass."""
         _validate_sector(self._profile(sector="Other", industry="Other",
                                        desc="Uranium mining and nuclear fuel production"))
+
+    def test_error_suggests_another_agent(self):
+        """Wrong-sector warning appends a 'use lynx-investor-*' line."""
+        with pytest.raises(SectorMismatchError) as exc:
+            _validate_sector(self._profile(
+                sector="Healthcare", industry="Biotechnology"))
+        message = str(exc.value)
+        assert "Suggestion" in message
+        assert "lynx-investor-healthcare" in message
+
+    def test_error_never_suggests_self(self):
+        """The suggestion never points back to this agent itself."""
+        with pytest.raises(SectorMismatchError) as exc:
+            _validate_sector(self._profile(
+                sector="Technology", industry="Software"))
+        message = str(exc.value)
+        assert "use 'lynx-investor-energy'" not in message

@@ -66,6 +66,7 @@ _VALIDATOR = SectorValidator.build(
     allowed_industries=_ALLOWED_INDUSTRIES,
     description_patterns=_ENERGY_DESCRIPTION_PATTERNS,
     scope_description=_SCOPE_MSG,
+    agent_name="lynx-investor-energy",
 )
 
 
