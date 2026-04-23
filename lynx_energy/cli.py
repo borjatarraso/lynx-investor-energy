@@ -150,6 +150,8 @@ def run_cli():
         return
 
     args = parser.parse_args()
+    from lynx_investor_core.cli import apply_locale
+    apply_locale(args)
     from rich.console import Console; errc = Console(stderr=True)
     from lynx_energy.core.storage import set_mode, is_testing
     set_mode(args.run_mode)

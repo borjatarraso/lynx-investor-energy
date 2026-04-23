@@ -12,6 +12,7 @@ from rich.panel import Panel
 from rich.prompt import IntPrompt, Prompt
 from rich.table import Table
 
+from lynx_investor_core.i18n import _
 from lynx_investor_core.pager import console_pager, paged_print
 from lynx_energy.core.analyzer import run_progressive_analysis
 from lynx_energy.core.news import download_article
@@ -21,7 +22,18 @@ from lynx_energy.models import AnalysisReport
 
 console = Console()
 
-BANNER = "\n[bold blue]  L Y N X   Energy Analysis[/]\n[dim]    Energy Sector Analysis[/]\n"
+
+def _banner() -> str:
+    """Compose the interactive-mode banner in the active locale.
+
+    Computed lazily so that ``--locale es`` changes it at runtime (module
+    import may happen before the CLI has applied the locale).
+    """
+    return f"\n[bold blue]  L Y N X   {_('Energy')} {_('Analysis')}[/]\n[dim]    {_('Energy')} {_('Sector')}  {_('Analysis')}[/]\n"
+
+
+# Back-compat: some callers/tests inspect ``BANNER`` directly.
+BANNER = _banner()
 
 MENU = """
 [bold cyan]Analysis:[/]
@@ -59,10 +71,14 @@ def run_interactive():
     from lynx_energy.core.storage import get_mode, is_testing
     logo = get_logo_ascii()
     console.print(f"[bold green]{logo}[/]")
-    console.print(BANNER)
-    mode_panel = "[bold yellow]TESTING MODE[/]\nData in data_test/" if is_testing() else "[bold green]PRODUCTION MODE[/]\nData in data/"
+    console.print(_banner())
+    mode_panel = (
+        f"[bold yellow]{_('TESTING MODE')}[/]\nData in data_test/"
+        if is_testing()
+        else f"[bold green]{_('PRODUCTION MODE')}[/]\nData in data/"
+    )
     console.print(Panel(mode_panel, border_style="yellow" if is_testing() else "green"))
-    console.print(Panel(MENU, border_style="cyan", title="[bold]Interactive Mode[/]"))
+    console.print(Panel(MENU, border_style="cyan", title=f"[bold]{_('Interactive Mode')}[/]"))
 
     current_report: AnalysisReport | None = None
 
@@ -72,7 +88,7 @@ def run_interactive():
             console.print(f"\n[bold {prompt_color}]lynx-energy[/] ", end="")
             raw = input().strip()
         except (EOFError, KeyboardInterrupt):
-            console.print("\n[dim]Goodbye![/]"); break
+            console.print(f"\n[dim]{_('Goodbye!')}[/]"); break
         if not raw: continue
 
         parts = raw.split(maxsplit=1)
